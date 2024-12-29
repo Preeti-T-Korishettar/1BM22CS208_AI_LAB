@@ -1,0 +1,52 @@
+class KnowledgeBase:
+    def __init__(self):
+        self.rules = []
+        self.facts = set()
+
+    def add_fact(self, fact):
+        self.facts.add(fact)
+
+    def add_rule(self, premise, conclusion):
+        self.rules.append((premise, conclusion))
+
+    def infer(self):
+        new_inferences = True
+        while new_inferences:
+            new_inferences = False
+            for premise, conclusion in self.rules:
+                # Check if all parts of the premise are in facts
+                if all(fact in self.facts for fact in premise):
+                    # If conclusion is not already a fact, add it
+                    if conclusion not in self.facts:
+                        self.facts.add(conclusion)
+                        new_inferences = True
+
+    def entails(self, hypothesis):
+        return hypothesis in self.facts
+
+
+# Creating a knowledge base for Alice, Bob, and Charlie example
+kb = KnowledgeBase()
+
+# Adding facts to the knowledge base
+kb.add_fact("Alice is the mother of Bob")
+kb.add_fact("Bob is the father of Charlie")
+kb.add_fact("A father is a parent")
+kb.add_fact("A mother is a parent")
+kb.add_fact("All parents have children")
+kb.add_fact("Alice is married to David")
+
+# Adding rules (premises -> conclusions)
+kb.add_rule(["Bob is the father of Charlie", "A father is a parent"], "Bob is a parent")
+kb.add_rule(["Alice is the mother of Bob", "A mother is a parent"], "Alice is a parent")
+kb.add_rule(["Bob is a parent", "All parents have children"], "Charlie and Bob are siblings")
+
+# Infer all possible conclusions from the knowledge base
+kb.infer()
+
+# Check if the hypothesis "Charlie is a sibling of Bob" is entailed
+hypothesis = "Charlie and Bob are siblings"
+if kb.entails(hypothesis):
+    print(f"The hypothesis '{hypothesis}' is entailed by the knowledge base.")
+else:
+    print(f"The hypothesis '{hypothesis}' is not entailed by the knowledge base.")
